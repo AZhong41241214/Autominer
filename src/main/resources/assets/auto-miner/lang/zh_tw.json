@@ -1,0 +1,6 @@
+{
+  "key.auto-miner.toggle": "切換自動挖掘",
+  "category.auto-miner": "自動挖掘",
+  "autominer.status.enabled": "§a自動挖掘：已啟用",
+  "autominer.status.disabled": "§c自動挖掘：已停用"
+}

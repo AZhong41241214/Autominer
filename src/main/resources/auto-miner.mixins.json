@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "ro.cofi.autominer.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "client": [
+    "MixinGameRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "auto-miner-refmap.json"
+}

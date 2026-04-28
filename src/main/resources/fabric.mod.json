@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "auto-miner",
+  "version": "1.0.0",
+  "name": "AutoMiner",
+  "description": "手持鎬時自動持續挖掘方塊。",
+  "authors": ["Kyoto"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "ro.cofi.autominer.AutoMinerClient"
+    ]
+  },
+  "mixins": [
+    "auto-miner.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "fabric-api": "*",
+    "minecraft": "~1.21.8",
+    "java": ">=21"
+  }
+}

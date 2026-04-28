@@ -1,0 +1,6 @@
+{
+  "key.auto-miner.toggle": "Toggle Auto Miner",
+  "category.auto-miner": "Auto Miner",
+  "autominer.status.enabled": "§aAuto Miner: Enabled",
+  "autominer.status.disabled": "§cAuto Miner: Disabled"
+}
