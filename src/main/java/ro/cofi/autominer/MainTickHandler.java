@@ -9,24 +9,22 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 
 import java.util.Random;
 
 public class MainTickHandler implements ClientTickEvents.EndTick {
 
     private boolean enabled = false;
-    private BlockPos lastBlockPos = null;
-    private Direction lastDirection = Direction.UP;
 
     private final Random random = new Random();
 
-    // 固定 12 秒挖掘後暫停 15 秒
-    private static final int MINE_DURATION = 12 * 20;  // 240 ticks
-    private static final int PAUSE_DURATION = 15 * 20;  // 300 ticks
+    private static final int MINE_DURATION  = 12 * 20;
+    private static final int PAUSE_DURATION = 4 * 20;
 
-    private int mineTicksRemaining = MINE_DURATION;
+    private int mineTicksRemaining  = MINE_DURATION;
     private int pauseTicksRemaining = 0;
-
     private int skipTicks = 0;
 
     public boolean isEnabled() {
@@ -57,19 +55,20 @@ public class MainTickHandler implements ClientTickEvents.EndTick {
             return;
         }
 
+        // 手持非鎬時停止
         ItemStack held = client.player.getMainHandStack();
         if (!held.isIn(ItemTags.PICKAXES)) {
             return;
         }
 
-        if (client.crosshairTarget != null &&
-            client.crosshairTarget.getType() == HitResult.Type.BLOCK) {
-            BlockHitResult hit = (BlockHitResult) client.crosshairTarget;
-            lastBlockPos = hit.getBlockPos();
-            lastDirection = hit.getSide();
+        // 自己計算射線，不依賴 crosshairTarget
+        BlockHitResult hit = calcCrosshairTarget(client);
+        if (hit == null || hit.getType() != HitResult.Type.BLOCK) {
+            return;
         }
 
-        if (lastBlockPos == null) return;
+        BlockPos pos = hit.getBlockPos();
+        Direction dir = hit.getSide();
 
         // 暫停中
         if (pauseTicksRemaining > 0) {
@@ -96,7 +95,41 @@ public class MainTickHandler implements ClientTickEvents.EndTick {
             skipTicks = random.nextInt(3);
         }
 
-        ClientPlayerInteractionManager mgr = client.interactionManager;
-        mgr.updateBlockBreakingProgress(lastBlockPos, lastDirection);
+        // 每 4 tick 才挖一次
+        if (client.world.getTime() % 4 != 0) return;
+
+        client.interactionManager.updateBlockBreakingProgress(pos, dir);
+    }
+
+    /**
+     * 自己用玩家視角計算準心射線，不依賴 client.crosshairTarget
+     * 失去焦點後 yaw/pitch 不會重置，所以可以繼續運作
+     */
+    private BlockHitResult calcCrosshairTarget(MinecraftClient client) {
+        if (client.player == null || client.world == null) return null;
+
+        float pitch = client.player.getPitch();
+        float yaw   = client.player.getYaw();
+
+        float f  = (float) Math.cos(-yaw * 0.017453292F - Math.PI);
+        float f1 = (float) Math.sin(-yaw * 0.017453292F - Math.PI);
+        float f2 = (float) -Math.cos(-pitch * 0.017453292F);
+        float f3 = (float) Math.sin(-pitch * 0.017453292F);
+
+        Vec3d dir    = new Vec3d(f1 * f2, f3, f * f2);
+        Vec3d eyePos = client.player.getCameraPosVec(1.0f);
+        Vec3d target = eyePos.add(dir.multiply(client.player.getBlockInteractionRange()));
+
+        HitResult result = client.world.raycast(new RaycastContext(
+                eyePos, target,
+                RaycastContext.ShapeType.OUTLINE,
+                RaycastContext.FluidHandling.NONE,
+                client.player
+        ));
+
+        if (result instanceof BlockHitResult bhr) {
+            return bhr;
+        }
+        return null;
     }
 }
