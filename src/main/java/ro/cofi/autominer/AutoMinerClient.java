@@ -24,7 +24,7 @@ public class AutoMinerClient implements ClientModInitializer {
         toggleKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.auto-miner.toggle",
                 InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_R,
+                GLFW.GLFW_KEY_H,
                 "category.auto-miner"
         ));
 
