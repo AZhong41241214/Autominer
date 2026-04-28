@@ -21,7 +21,7 @@ public class MainTickHandler implements ClientTickEvents.EndTick {
     private final Random random = new Random();
 
     private static final int MINE_DURATION  = 12 * 20;
-    private static final int PAUSE_DURATION = 4 * 20;
+    private static final int PAUSE_DURATION = 10 * 20;
 
     private int mineTicksRemaining  = MINE_DURATION;
     private int pauseTicksRemaining = 0;
