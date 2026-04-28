@@ -3,6 +3,7 @@ package ro.cofi.autominer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
@@ -28,7 +29,9 @@ public class AutoMinerClient implements ClientModInitializer {
                 "category.auto-miner"
         ));
 
-        ClientTickEvents.END_CLIENT_TICK.register(new MainTickHandler());
+        MainTickHandler handler = new MainTickHandler();
+        ClientTickEvents.END_CLIENT_TICK.register(handler);
+        HudRenderCallback.EVENT.register(new HudRenderer(handler));
 
         LOGGER.info("{} successfully loaded", MOD_NAME);
     }
