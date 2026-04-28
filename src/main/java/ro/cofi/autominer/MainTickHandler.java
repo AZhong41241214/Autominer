@@ -20,7 +20,7 @@ public class MainTickHandler implements ClientTickEvents.EndTick {
 
     private final Random random = new Random();
 
-    private static final int MINE_DURATION  = 12 * 20;
+    private static final int MINE_DURATION  = 20 * 20;
     private static final int PAUSE_DURATION = 10 * 20;
 
     private int mineTicksRemaining  = MINE_DURATION;
@@ -94,10 +94,6 @@ public class MainTickHandler implements ClientTickEvents.EndTick {
         if (random.nextInt(20) == 0) {
             skipTicks = random.nextInt(3);
         }
-
-        // 每 4 tick 才挖一次
-        if (client.world.getTime() % 4 != 0) return;
-
         client.interactionManager.updateBlockBreakingProgress(pos, dir);
     }
 
