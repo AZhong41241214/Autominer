@@ -11,16 +11,12 @@ base {
 }
 
 repositories {
-    // 可在此加入額外 Maven repo
 }
 
 dependencies {
-    // Minecraft 與 Fabric Loader
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-    // Fabric API
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
@@ -44,6 +40,6 @@ java {
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.base.archivesName.get()}" }
+        rename { "${it}_${project.base.archivesName.get()}"}
     }
 }
