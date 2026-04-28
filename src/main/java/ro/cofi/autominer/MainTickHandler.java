@@ -21,7 +21,7 @@ public class MainTickHandler implements ClientTickEvents.EndTick {
     }
 
     private void tick(MinecraftClient client) {
-        // 切換鍵：偵測按下邊緣（按下瞬間才觸發，不重複）
+        // 切換鍵偵測
         boolean currentlyPressed = AutoMinerClient.toggleKey.isPressed();
         if (currentlyPressed && !lastPressed) {
             enabled = !enabled;
@@ -29,19 +29,27 @@ public class MainTickHandler implements ClientTickEvents.EndTick {
         }
         lastPressed = currentlyPressed;
 
-        if (!enabled) return;
-        if (client.player == null || client.world == null) return;
+        if (!enabled || client.player == null || client.world == null) {
+            client.options.attackKey.setPressed(false);
+            return;
+        }
 
         ItemStack held = client.player.getMainHandStack();
 
-        // 使用 ItemTag 判斷，相容所有材質與模組新增的鎬
-        if (!held.isIn(ItemTags.PICKAXES)) return;
+        // 手持非鎬時停止
+        if (!held.isIn(ItemTags.PICKAXES)) {
+            client.options.attackKey.setPressed(false);
+            return;
+        }
 
         // 準心必須對著方塊
-        if (client.crosshairTarget == null) return;
-        if (client.crosshairTarget.getType() != HitResult.Type.BLOCK) return;
+        if (client.crosshairTarget == null ||
+            client.crosshairTarget.getType() != HitResult.Type.BLOCK) {
+            client.options.attackKey.setPressed(false);
+            return;
+        }
 
-        // 模擬持續按住左鍵（挖掘）
+        // 模擬持續按住左鍵
         client.options.attackKey.setPressed(true);
     }
 }
