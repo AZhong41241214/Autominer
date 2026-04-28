@@ -20,9 +20,9 @@ public class MainTickHandler implements ClientTickEvents.EndTick {
 
     private final Random random = new Random();
 
-    // 固定 20 秒挖掘後暫停 10 秒
-    private static final int MINE_DURATION = 20 * 20;  // 400 ticks
-    private static final int PAUSE_DURATION = 10 * 20; // 200 ticks
+    // 固定 12 秒挖掘後暫停 6 秒
+    private static final int MINE_DURATION = 12 * 20;  // 240 ticks
+    private static final int PAUSE_DURATION = 6 * 20;  // 120 ticks
 
     private int mineTicksRemaining = MINE_DURATION;
     private int pauseTicksRemaining = 0;
