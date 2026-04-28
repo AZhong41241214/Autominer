@@ -20,18 +20,21 @@ public class MainTickHandler implements ClientTickEvents.EndTick {
 
     private final Random random = new Random();
 
+    // 固定 20 秒挖掘後暫停 10 秒
+    private static final int MINE_DURATION = 20 * 20;  // 400 ticks
+    private static final int PAUSE_DURATION = 10 * 20; // 200 ticks
+
+    private int mineTicksRemaining = MINE_DURATION;
     private int pauseTicksRemaining = 0;
-    private int nextPauseTicks = randomNextPause();
+
     private int skipTicks = 0;
 
-    private int randomNextPause() {
-        // 每 8~20 秒暫停一次（160~400 ticks）
-        return 160 + random.nextInt(240);
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    private int randomPauseDuration() {
-        // 暫停 0.5~2 秒（10~40 ticks）
-        return 10 + random.nextInt(30);
+    public int getPauseTicksRemaining() {
+        return pauseTicksRemaining;
     }
 
     @Override
@@ -44,7 +47,6 @@ public class MainTickHandler implements ClientTickEvents.EndTick {
     }
 
     private void tick(MinecraftClient client) {
-        // 切換鍵偵測
         while (AutoMinerClient.toggleKey.wasPressed()) {
             enabled = !enabled;
             AutoMinerClient.LOGGER.info("AutoMiner {}", enabled ? "enabled" : "disabled");
@@ -55,13 +57,11 @@ public class MainTickHandler implements ClientTickEvents.EndTick {
             return;
         }
 
-        // 手持非鎬時停止
         ItemStack held = client.player.getMainHandStack();
         if (!held.isIn(ItemTags.PICKAXES)) {
             return;
         }
 
-        // 有準心目標時更新記憶的方塊位置與面
         if (client.crosshairTarget != null &&
             client.crosshairTarget.getType() == HitResult.Type.BLOCK) {
             BlockHitResult hit = (BlockHitResult) client.crosshairTarget;
@@ -71,17 +71,19 @@ public class MainTickHandler implements ClientTickEvents.EndTick {
 
         if (lastBlockPos == null) return;
 
-        // 暫停計時器
+        // 暫停中
         if (pauseTicksRemaining > 0) {
             pauseTicksRemaining--;
+            if (pauseTicksRemaining == 0) {
+                mineTicksRemaining = MINE_DURATION;
+            }
             return;
         }
 
-        // 計算下次暫停
-        nextPauseTicks--;
-        if (nextPauseTicks <= 0) {
-            pauseTicksRemaining = randomPauseDuration();
-            nextPauseTicks = randomNextPause();
+        // 挖掘倒數
+        mineTicksRemaining--;
+        if (mineTicksRemaining <= 0) {
+            pauseTicksRemaining = PAUSE_DURATION;
             return;
         }
 
@@ -94,7 +96,6 @@ public class MainTickHandler implements ClientTickEvents.EndTick {
             skipTicks = random.nextInt(3);
         }
 
-        // 直接呼叫 interactionManager 驅動挖掘
         ClientPlayerInteractionManager mgr = client.interactionManager;
         mgr.updateBlockBreakingProgress(lastBlockPos, lastDirection);
     }
