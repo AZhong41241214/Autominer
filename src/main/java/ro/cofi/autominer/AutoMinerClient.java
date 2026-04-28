@@ -13,7 +13,7 @@ public class AutoMinerClient implements ClientModInitializer {
 
     public static final String MOD_ID = "auto-miner";
     public static final String MOD_NAME = "AutoMiner";
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 
     public static KeyBinding toggleKey;
 
@@ -21,7 +21,6 @@ public class AutoMinerClient implements ClientModInitializer {
     public void onInitializeClient() {
         LOGGER.info("Initializing {}", MOD_NAME);
 
-        // 註冊切換快捷鍵（預設 R）
         toggleKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.auto-miner.toggle",
                 InputUtil.Type.KEYSYM,
@@ -29,7 +28,6 @@ public class AutoMinerClient implements ClientModInitializer {
                 "category.auto-miner"
         ));
 
-        // 每 tick 執行
         ClientTickEvents.END_CLIENT_TICK.register(new MainTickHandler());
 
         LOGGER.info("{} successfully loaded", MOD_NAME);
