@@ -19,7 +19,7 @@
 
 ## 安裝方式
 
-1. 從 [Actions](../../actions) 下載最新的 `.jar`
+1. 從上方下載 AutoMiner-1.0.0.jar`
 2. 放入 `.minecraft/mods` 資料夾
 3. 使用 Fabric 啟動遊戲
 
