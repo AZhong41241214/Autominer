@@ -4,11 +4,8 @@
   "package": "ro.cofi.autominer.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
-  "client": [
-    "MixinGameRenderer"
-  ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
-  },
-  "refmap": "auto-miner-refmap.json"
+  }
 }
